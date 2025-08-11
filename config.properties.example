@@ -1,0 +1,17 @@
+# Envisalink Connection Settings
+envisalink.host=192.168.1.10
+envisalink.port=4025
+envisalink.password=user
+
+# Blue Iris Server Settings
+blueiris.host=192.168.1.11
+blueiris.port=81
+blueiris.username=admin
+blueiris.password=admin
+
+# Profile Mapping
+# The Blue Iris profile to activate when the alarm partition is armed away.
+profile.armed.away=1
+
+# The Blue Iris profile to activate when the alarm partition is disarmed.
+profile.disarmed=2

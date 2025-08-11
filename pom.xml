@@ -16,12 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- Envisalink/DSC Library -->
-        <dependency>
-            <groupId>com.github.kmbulebu.dsc</groupId>
-            <artifactId>dsc-it100-library</artifactId>
-            <version>0.6</version>
-        </dependency>
 
         <!-- Logging -->
         <dependency>

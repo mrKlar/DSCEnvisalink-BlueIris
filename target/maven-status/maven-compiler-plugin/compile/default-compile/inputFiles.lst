@@ -1,0 +1,11 @@
+/app/src/main/java/com/envisalink/blueiris/BlueIrisService.java
+/app/src/main/java/com/envisalink/blueiris/Config.java
+/app/src/main/java/com/envisalink/blueiris/EnvisalinkEventHandler.java
+/app/src/main/java/com/envisalink/blueiris/EnvisalinkListener.java
+/app/src/main/java/com/envisalink/blueiris/Main.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/DSCPanel.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/commands/read/PartitionArmAwayCommand.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/commands/read/PartitionDisarmedCommand.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/commands/read/ReadCommand.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/listeners/ReadCommandListener.java
+/app/src/main/java/com/github/kmbulebu/dsc/api/netty/NettyDSCPanel.java
