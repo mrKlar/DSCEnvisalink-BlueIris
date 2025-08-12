@@ -1,24 +1,22 @@
 package com.envisalink.blueiris;
 
-import com.github.kmbulebu.dsc.api.DSCPanel;
-import com.github.kmbulebu.dsc.api.commands.read.PartitionArmAwayCommand;
-import com.github.kmbulebu.dsc.api.commands.read.PartitionDisarmedCommand;
-import com.github.kmbulebu.dsc.api.commands.read.ReadCommand;
-import com.github.kmbulebu.dsc.api.listeners.ReadCommandListener;
-import com.github.kmbulebu.dsc.api.netty.NettyDSCPanel;
+import com.github.kmbulebu.dsc.it100.ConfigurationBuilder;
+import com.github.kmbulebu.dsc.it100.IT100;
+import com.github.kmbulebu.dsc.it100.commands.read.PartitionArmedCommand;
+import com.github.kmbulebu.dsc.it100.commands.read.PartitionDisarmedCommand;
+import com.github.kmbulebu.dsc.it100.commands.read.ReadCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import rx.functions.Action1;
 
-import java.time.Duration;
-
-public class EnvisalinkListener implements ReadCommandListener {
+public class EnvisalinkListener {
 
     private static final Logger logger = LogManager.getLogger(EnvisalinkListener.class);
 
     private final String host;
     private final int port;
     private final String password;
-    private DSCPanel dscPanel;
+    private IT100 it100;
     private EnvisalinkEventHandler eventHandler;
 
     public EnvisalinkListener(Config config) {
@@ -33,18 +31,24 @@ public class EnvisalinkListener implements ReadCommandListener {
 
     public void start() throws Exception {
         logger.info("Connecting to Envisalink at {}:{}", host, port);
-        // Using the Netty-based implementation
-        dscPanel = new NettyDSCPanel();
 
-        // Add this class as a listener for command events
-        dscPanel.addReadCommandListener(this);
+        // Configure for Envisalink
+        // Hostname/IP: envisalink, Port: 4025, Password: user
+        it100 = new IT100(new ConfigurationBuilder().withRemoteSocket(host, port)
+                //.withEnvisalinkPassword(password) // TODO: Figure out why this does not compile
+                .build());
 
-        // Connect to the panel.
-        dscPanel.connect(host, port, password, Duration.ofSeconds(10));
+        // Begin listening to IT-100 commands through an rxjava Observable
+        it100.connect();
+        it100.getReadObservable().subscribe(new Action1<ReadCommand>() {
+            @Override
+            public void call(ReadCommand command) {
+                onReadCommand(command);
+            }
+        });
         logger.info("Successfully connected to Envisalink.");
     }
 
-    @Override
     public void onReadCommand(ReadCommand command) {
         logger.debug("Received command from Envisalink: {}", command);
 
@@ -54,10 +58,12 @@ public class EnvisalinkListener implements ReadCommandListener {
         }
 
         // Check the type of command and call the appropriate handler method
-        if (command instanceof PartitionArmAwayCommand) {
-            PartitionArmAwayCommand armCmd = (PartitionArmAwayCommand) command;
-            logger.info("Partition {} has been armed (Away).", armCmd.getPartition());
-            eventHandler.onPartitionArmAway(armCmd.getPartition());
+        if (command instanceof PartitionArmedCommand) {
+            PartitionArmedCommand armCmd = (PartitionArmedCommand) command;
+            if (armCmd.getMode() == PartitionArmedCommand.ArmedMode.AWAY) {
+                logger.info("Partition {} has been armed (Away).", armCmd.getPartition());
+                eventHandler.onPartitionArmAway(armCmd.getPartition());
+            }
         } else if (command instanceof PartitionDisarmedCommand) {
             PartitionDisarmedCommand disarmCmd = (PartitionDisarmedCommand) command;
             logger.info("Partition {} has been disarmed.", disarmCmd.getPartition());
@@ -67,9 +73,13 @@ public class EnvisalinkListener implements ReadCommandListener {
     }
 
     public void stop() {
-        if (dscPanel != null && dscPanel.isConnected()) {
+        if (it100 != null) {
             logger.info("Disconnecting from Envisalink.");
-            dscPanel.disconnect();
+            try {
+                it100.disconnect();
+            } catch (Exception e) {
+                logger.error("Error disconnecting from Envisalink", e);
+            }
         }
     }
 }

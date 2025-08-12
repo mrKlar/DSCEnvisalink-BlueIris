@@ -1,6 +1,6 @@
-com/github/kmbulebu/dsc/api/commands/read/PartitionArmAwayCommand.class
-com/envisalink/blueiris/EnvisalinkEventHandler.class
 com/github/kmbulebu/dsc/api/netty/NettyDSCPanel.class
+com/envisalink/blueiris/EnvisalinkEventHandler.class
+com/envisalink/blueiris/EnvisalinkListener$1.class
 com/github/kmbulebu/dsc/api/listeners/ReadCommandListener.class
 com/envisalink/blueiris/Config.class
 com/envisalink/blueiris/Main.class
