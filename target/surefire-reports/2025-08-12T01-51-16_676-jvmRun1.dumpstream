@@ -1,0 +1,2 @@
+# Created at 2025-08-12T01:51:20.294
+Test mechanism :: Unable to make private final native void java.lang.Object.wait0(long) throws java.lang.InterruptedException accessible: module java.base does not "opens java.lang" to unnamed module @5594a1b5
